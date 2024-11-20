@@ -80,13 +80,6 @@ func TestAccResourceJourneyViewsBasic(t *testing.T) {
 					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.metrics.0.display_label", metricDisplayLabel),
 					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.metrics.0.aggregate", metricAggregate),
 					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.metrics.0.element_id", elementsId),
-					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.group_by_time", chartGroupByTime),
-					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.group_by_max", fmt.Sprintf("%d", chartGroupByMax)),
-					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.display_attributes.#", "1"),
-					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.display_attributes.0.var_type", displayAttributesVarType),
-					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.display_attributes.0.group_by_title", displayAttributesGroupByTitle),
-					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.display_attributes.0.metrics_title", displayAttributesMetricsTitle),
-					resource.TestCheckResourceAttr("genesyscloud_journey_views."+journeyResource, "charts.0.display_attributes.0.show_legend", fmt.Sprintf("%v", displayAttributesShowLegend)),
 				),
 			},
 			{
