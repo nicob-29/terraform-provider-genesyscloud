@@ -178,6 +178,10 @@ func buildCharts(d *schema.ResourceData) *[]platformclientv2.Journeyviewchart {
 		if displayAttributesSlice, ok := chartMap["display_attributes"].([]interface{}); ok {
 			chart.DisplayAttributes = buildDisplayAttributes(displayAttributesSlice)
 		}
+		
+		if groupByAttributesSlice, ok := chartMap["group_by_attributes"].([]interface{}); ok {
+			chart.GroupByAttributes = buildGroupByAttributes(groupByAttributesSlice)
+		}
 		charts = append(charts, chart)
 	}
 
@@ -229,6 +233,30 @@ func buildDisplayAttributes(objsSlice []interface{}) *platformclientv2.Journeyvi
 
 	return &displayAttribute
 }
+
+func buildGroupByAttributes(objsSlice []interface{}) *[]platformclientv2.Journeyviewchartgroupbyattribute {
+	if len(objsSlice) == 0 {
+		emptySlice := make([]platformclientv2.Journeyviewchartgroupbyattribute, 0)
+		return &emptySlice
+	}
+
+	var objs []platformclientv2.Journeyviewchartgroupbyattribute
+
+	for _, obj := range objsSlice {
+		objMap, ok := obj.(map[string]interface{})
+		if !ok {
+			return nil //"groupbyattribute is not a map[string]interface{}")
+		}
+
+		var groupbyattribute platformclientv2.Journeyviewchartgroupbyattribute
+		groupbyattribute.Attribute = getStringPointerFromInterface(objMap["attribute"])
+		groupbyattribute.ElementId = getStringPointerFromInterface(objMap["element_id"])
+		objs = append(objs, groupbyattribute)
+	}
+
+	return &objs
+}
+
 
 func getStringPointerFromInterface(val interface{}) *string {
 	if valString, ok := val.(string); ok {
@@ -355,6 +383,7 @@ func flattenCharts(charts *[]platformclientv2.Journeyviewchart) []interface{} {
 		resourcedata.SetMapValueIfNotNil(chartsMap, "group_by_time", chart.GroupByTime)
 		resourcedata.SetMapValueIfNotNil(chartsMap, "group_by_max", chart.GroupByMax)
 		resourcedata.SetMapInterfaceArrayWithFuncIfNotNil(chartsMap, "display_attributes", chart.DisplayAttributes, flattenDisplayAttributes)
+		resourcedata.SetMapInterfaceArrayWithFuncIfNotNil(chartsMap, "group_by_attributes", chart.GroupByAttributes, flattenGroupbyAttributes)
 		chartsList = append(chartsList, chartsMap)
 	}
 	return chartsList
@@ -388,3 +417,19 @@ func flattenDisplayAttributes(displayAttributes *platformclientv2.Journeyviewcha
 
 	return displayAttributesList
 }
+
+func flattenGroupbyAttributes(groupByAttributes *[]platformclientv2.Journeyviewchartgroupbyattribute) []interface{} {
+	if len(*groupByAttributes) == 0 {
+		return nil
+	}
+	var groupByAttributesList []interface{}
+	for _, groupByAttribute := range *groupByAttributes {
+		groupByAttributeMap := make(map[string]interface{})
+		resourcedata.SetMapValueIfNotNil(groupByAttributeMap, "attribute", groupByAttribute.Attribute)
+		resourcedata.SetMapValueIfNotNil(groupByAttributeMap, "element_id", groupByAttribute.ElementId)
+
+		groupByAttributesList = append(groupByAttributesList, groupByAttributeMap)
+	}
+	return groupByAttributesList
+}
+
